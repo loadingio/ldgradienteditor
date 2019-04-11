@@ -1,35 +1,33 @@
 (!->
-  colors = [
-    <[#f0f #0ff]> <[#ff0 #f0f]> <[#ff9 #fc9]> <[#5f9 #7ff]> <[#f00 #f93]> <[#fbd786 #f7797d]>
-  ]
-
   get-color-alt = (c) ->
     c = ldColor.hcl c
     color-alt = {} <<< c <<< {l: if c.l > 50 => c.l - 20 else c.l + 20}
 
   CENS = (n) -> document.createElementNS("http://www.w3.org/2000/svg", n)
   SA = (n, o) -> for k,v of o => n.setAttribute k, v
+  QS = (n, s) -> n.querySelector(s)
+  QSA = (n, s) -> Array.from(n.querySelectorAll(s))
 
   local = {}
 
   window.GradientEditor = GradientEditor = (opt = {}) ->
-    @opt = opt
-    @root = root = if typeof(opt.root) == typeof('') => opt.root = document.querySelector(opt.root) else opt.root
+    @root = root = if typeof(opt.root) == typeof('') => opt.root = QS(document, opt.root) else opt.root
     @root.classList.add \ldgradient
-    @id = opt.id or "ldg-#{Math.random!toString 36 .substring 2}"
-    @dir = opt.dir or 0
-    @angle = {}
-
-    @state = do
-      drag: false    # dragging the dots
-      slider: false  # slider shown
-      knob: false    # knob is turning
-      active: false  # are widgets shown?
-      hover: false   # is mouse over?
+    @ <<< do
+      opt: opt
+      id: opt.id or "ldg-#{Math.random!toString 36 .substring 2}" # used in linearGradient
+      dir: opt.dir or 0 # gradient direction
+      angle: {}         # angle information for user interaaction
+      state: do
+        drag: false    # dragging the dots
+        slider: false  # slider shown
+        knob: false    # knob is turning
+        active: false  # are widgets shown?
+        hover: false   # is mouse over?
 
     # if there is no colors in opt, try lookup some from DOM. 
     if !opt.colors or opt.colors.length < 2 =>
-      opt.colors = Array.from(@root.querySelectorAll('g.ldg-colors circle')).map(-> it.getAttribute \fill)
+      opt.colors = QSA(@root,'g.ldg-colors circle').map(-> it.getAttribute \fill)
     if opt.colors.length < 2 => opt.colors = <[#eee #ddd]>
 
     # colors = [ldColor, ldColor, ...] with "offset" fields in ldColor.
@@ -41,13 +39,13 @@
     # Prepare DOM
     if !@opt.manual-dom => @build! # skeleton
     @el = do # containers
-      bar: @root.querySelector('.ldg-bar')
-      colors: @root.querySelector('.ldg-colors')
-      board: @root.querySelector('.ldg-board')
-      gradient: gradient = @root.querySelector('linearGradient')
-      texts: @root.querySelector \.ldg-texts
-      percent: @root.querySelector \.ldg-percent
-      hex: @root.querySelector \.ldg-hex
+      bar: QS(@root, '.ldg-bar')
+      colors: QS(@root, '.ldg-colors')
+      board: QS(@root, '.ldg-board')
+      gradient: gradient = QS(@root, 'linearGradient')
+      texts: QS(@root, \.ldg-texts)
+      percent: QS(@root, \.ldg-percent)
+      hex: QS(@root, \.ldg-hex)
 
     @set-idx 0
 
@@ -114,6 +112,7 @@
         if local.client and local.client != @ => local.client.lock false
         local.client = @
         @lock true
+        if !(ldcp?) => return
         ldcp.set-palette {colors: @colors}
         ldcp.set-idx @idx
         ldcp.toggle true, e.target
@@ -136,16 +135,15 @@
     build: ->
       @root.innerHTML = """
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 10 120 120" preserveAspectRatio="xMidYMid">
-        <linearGradient id="#{@id}-gradient" x1="0" x2="1" y1="0" y2="0">
-        </linearGradient>
+        <linearGradient id="#{@id}-gradient" x1="0" x2="1" y1="0" y2="0"></linearGradient>
         <path class="ldg-bar" d="M-1.962 80 A60 60 1 0 0 101.962 80" fill="none" stroke="\#eeeff1" stroke-width="1"/>
         <g class="ldg-board"><circle cx="50" cy="50" r="50" fill="url(\##{@id}-gradient)"/><use href="\#ldg-knob"/></g>
-        <g class="ldg-texts">
-          <text class="ldg-hex" x="50" y="50" dx="-0.2em" dy="-0.7em">\#F23123</text>
-          <text x="50" y="50" dx="0.1em" dy="0.6em">
-            <tspan class="ldg-percent">30</tspan><tspan font-size="0.7em">%</tspan>
+        <g class="ldg-texts" transform="translate(50 50)">
+          <text class="ldg-hex" dx="-0.2em" dy="-0.7em"></text>
+          <text dx="0.1em" dy="0.6em">
+            <tspan class="ldg-percent"></tspan><tspan font-size="0.7em">%</tspan>
           </text>
-          <text x="50" y="50" dx="0.0em" dy="1.4em" class="ldg-btn">
+          <text dy="1.4em" class="ldg-btn">
             <tspan data-action="dup">+ </tspan><tspan data-action="del"> &times;</tspan>
           </text>
         </g>
@@ -176,9 +174,8 @@
       colors = [c for c in @colors]
       colors.sort (a, b) -> a.offset - b.offset
       for c in colors =>
-        s = document.createElementNS("http://www.w3.org/2000/svg", "stop")
-        s.setAttribute \stop-color, ldColor.web(c)
-        s.setAttribute \offset, c.offset
+        s = CENS \stop
+        SA s, {"stop-color": ldColor.web(c), offset: c.offset}
         g.appendChild s
 
     lock: (v) ->
@@ -194,21 +191,19 @@
       @colors[@idx] = c <<< @colors[@idx]{offset}
       c-alt = get-color-alt c
       SA @el.colors.querySelector("g:nth-child(#{1 + @idx}) .ldg-dot"), do
-        fill: ldColor.web(c)
-        stroke: ldColor.web(c-alt)
+        fill: ldColor.web(c), stroke: ldColor.web(c-alt)
       @el.hex.textContent = ldColor.hex(c)
       @update-gradient!
 
     toggle: (v) ->
       if @locked => return
-
       if !(v?) => @state.active = v = !@state.active
       if @debounce => clearTimeout @debounce; @debounce = null
       @root.classList[if v => \add else \remove] \active
       setTimeout (~> @root.classList[if v => \add else \remove] \on), 300
       @toggle-slider v
 
-    get-dots: -> Array.from(@el.colors.querySelectorAll 'g')
+    get-dots: -> QSA @el.colors, 'g'
 
     toggle-slider: (v) ->
       if !(v?) => v = !@state.slider
@@ -229,13 +224,9 @@
       @state.slider = v
 
   ld$.find(document.body, '.ldgradient').map -> new GradientEditor({root: it})
-  colors.map ->
-    node = document.createElement("div")
-    document.body.appendChild node
-    new GradientEditor {root: node, colors: it}
-  node = document.querySelector \text
-  ldcp = new ldColorPicker null, {className: 'flat compact-palette shadow no-alpha'}
-  ldcp.on \change, -> 
-    if local.client => local.client.set-color it
-  ldcp.on \toggle, -> local.client.lock it
+
+  if ldColorPicker? =>
+    ldcp = new ldColorPicker null, {className: 'flat compact-palette shadow no-alpha'}
+    ldcp.on \change, -> if local.client => local.client.set-color it
+    ldcp.on \toggle, -> local.client.lock it
 )!

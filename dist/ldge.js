@@ -181,9 +181,6 @@
         }
         local.client = this$;
         this$.lock(true);
-        if (!(typeof ldcp != 'undefined' && ldcp !== null)) {
-          return;
-        }
         ldcp.setPalette({
           colors: this$.colors
         });

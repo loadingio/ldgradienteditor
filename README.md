@@ -11,18 +11,21 @@ Minimalist Gradient Editor by loading.io. Features:
 
 include necessary css and js files:
 
-    ````
     <link rel="stylesheet" type="text/css" href="ldge.min.css"/>
     <script src="ldColor.min.js"></script>
     <script src="ldcp.min.js"></script>
     <script src="ldge.min.js"></script>
 
-    ````
+
 construct the editor object with a root element and an array of gradient color:
 
-    ````
-    var editor = new ldGradientEditor({root: "#container", colors: ["#f0f", "#0ff"]});
-    ````
+    var editor = new ldGradientEditor({
+      root: "#container",
+      colors: ["#f0f", "#0ff"]
+    });
+
+
+
 # License
 
 MIT License.
