@@ -1,0 +1,29 @@
+doctype html
+html
+  head
+    link(rel="stylesheet",type="text/css",href="lib/ldcp.min.css")
+    link(rel="stylesheet",type="text/css",href="ldge.css")
+    //-link(rel="stylesheet",type="text/css",href="index.css")
+  body
+    svg(style="position:absolute;z-index:-1;opacity:0")
+      defs: path#ldg-knob(fill="none" stroke="#fff" stroke-opacity="1.0" stroke-width="1" d="M53.422,10.156C73.91,11.893,90,29.062,90,50c0,22.091-17.909,40-40,40S10,72.091,10,50c0-20.938,16.09-38.107,36.578-39.844 M50,7.5v4")
+    mixin gradient(colors, id)
+      .ldgradient
+        svg(viewBox="-10 10 120 120",preserveAspectRatio="xMidYMid")
+          linearGradient(id=id,x1="0",x2="1",y1="0",y2="0")
+            each c,i in colors
+              stop(stop-color=c,offset=i / (colors.length - 1))
+          g.ldg-board
+            circle(cx="50",cy="50",r="50",fill="url(#" + id + ")")
+            use(href="#ldg-knob")
+          path.ldg-bar(d="M-1.962 80 A60 60 1 0 0 101.962 80",fill="none",stroke="#eeeff1",stroke-width="1")
+          g.ldg-colors
+            each c,i in colors
+              g(style="transform:rotate(" + (-15 * ((colors.length - 1) * 0.5) + i * 15) + "deg)")
+                circle(cx="50",cy="110",r="6",fill=c)
+
+    script(src="lib/ldColor.min.js")
+    script(src="lib/ldcp.min.js")
+    script(src="lib/ldq.min.js")
+    script(src="ldge.js")
+    //-script(src="index.js")

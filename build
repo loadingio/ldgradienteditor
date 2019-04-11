@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+mkdir -p dist
+rm dist/*.js
+echo "Transpiling ldge.ls to ldge.js"
+lsc -cpb src/ldge.ls > dist/ldge.js
+echo "Uglify ldge.js...."
+uglifyjs dist/ldge.js > dist/ldge.min.js
+echo "Transpiling ldge.styl..."
+stylus -p src/ldge.styl > dist/ldge.css
+echo "Uglifying ldpp.css..."
+uglifycss dist/ldge.css > dist/ldge.min.css
+echo "Done."
