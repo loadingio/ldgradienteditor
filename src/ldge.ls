@@ -123,7 +123,9 @@
         nc.offset = (nc.offset + @colors[@idx + (if @idx < @colors.length - 1 => 1 else -1)].offset) / 2
         @colors.splice @idx, 0, nc
         if @idx == @colors.length - 1 => @set-idx @idx + 1
-      else if act == \del and @colors.length > 2 => @colors.splice (@idx), 1
+      else if act == \del and @colors.length > 2 =>
+        @colors.splice @idx, 1
+        if @idx > 0 => @set-idx @idx - 1
       else return
       @update-gradient!
       @build-dots true
@@ -137,7 +139,9 @@
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 10 120 120" preserveAspectRatio="xMidYMid">
         <linearGradient id="#{@id}-gradient" x1="0" x2="1" y1="0" y2="0"></linearGradient>
         <path class="ldg-bar" d="M-1.962 80 A60 60 1 0 0 101.962 80" fill="none" stroke="\#eeeff1" stroke-width="1"/>
-        <g class="ldg-board"><circle cx="50" cy="50" r="50" fill="url(\##{@id}-gradient)"/><use href="\#ldg-knob"/></g>
+        <g class="ldg-board" transform="rotate(#{@dir} 50 50)">
+          <circle cx="50" cy="50" r="50" fill="url(\##{@id}-gradient)"/><use href="\#ldg-knob"/>
+        </g>
         <g class="ldg-texts" transform="translate(50 50)">
           <text class="ldg-hex" dx="-0.2em" dy="-0.7em"></text>
           <text dx="0.1em" dy="0.6em">

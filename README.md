@@ -4,8 +4,12 @@ Minimalist Gradient Editor by loading.io. Features:
 
  * Lightweight
    - less than 4k ( no colorpicker, zipped ), less than 20k ( with colorpicker, zipped )
+
  * Vanilla - jQuery/react/angular/vue free.
    - optional dependency to ldColorPicker and ldColor for color editing
+
+ * Responsive - built with SVG. Customize size by simply styling containers
+
 
 # Usage
 

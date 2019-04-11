@@ -203,6 +203,9 @@
         }
       } else if (act === 'del' && this$.colors.length > 2) {
         this$.colors.splice(this$.idx, 1);
+        if (this$.idx > 0) {
+          this$.setIdx(this$.idx - 1);
+        }
       } else {
         return;
       }
@@ -213,7 +216,7 @@
   };
   GradientEditor.prototype = import$(Object.create(Object.prototype), {
     build: function(){
-      return this.root.innerHTML = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"-10 10 120 120\" preserveAspectRatio=\"xMidYMid\">\n  <linearGradient id=\"" + this.id + "-gradient\" x1=\"0\" x2=\"1\" y1=\"0\" y2=\"0\"></linearGradient>\n  <path class=\"ldg-bar\" d=\"M-1.962 80 A60 60 1 0 0 101.962 80\" fill=\"none\" stroke=\"#eeeff1\" stroke-width=\"1\"/>\n  <g class=\"ldg-board\"><circle cx=\"50\" cy=\"50\" r=\"50\" fill=\"url(#" + this.id + "-gradient)\"/><use href=\"#ldg-knob\"/></g>\n  <g class=\"ldg-texts\" transform=\"translate(50 50)\">\n    <text class=\"ldg-hex\" dx=\"-0.2em\" dy=\"-0.7em\"></text>\n    <text dx=\"0.1em\" dy=\"0.6em\">\n      <tspan class=\"ldg-percent\"></tspan><tspan font-size=\"0.7em\">%</tspan>\n    </text>\n    <text dy=\"1.4em\" class=\"ldg-btn\">\n      <tspan data-action=\"dup\">+ </tspan><tspan data-action=\"del\"> &times;</tspan>\n    </text>\n  </g>\n  <g class=\"ldg-colors\"></g>\n</svg>";
+      return this.root.innerHTML = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"-10 10 120 120\" preserveAspectRatio=\"xMidYMid\">\n  <linearGradient id=\"" + this.id + "-gradient\" x1=\"0\" x2=\"1\" y1=\"0\" y2=\"0\"></linearGradient>\n  <path class=\"ldg-bar\" d=\"M-1.962 80 A60 60 1 0 0 101.962 80\" fill=\"none\" stroke=\"#eeeff1\" stroke-width=\"1\"/>\n  <g class=\"ldg-board\" transform=\"rotate(" + this.dir + " 50 50)\">\n    <circle cx=\"50\" cy=\"50\" r=\"50\" fill=\"url(#" + this.id + "-gradient)\"/><use href=\"#ldg-knob\"/>\n  </g>\n  <g class=\"ldg-texts\" transform=\"translate(50 50)\">\n    <text class=\"ldg-hex\" dx=\"-0.2em\" dy=\"-0.7em\"></text>\n    <text dx=\"0.1em\" dy=\"0.6em\">\n      <tspan class=\"ldg-percent\"></tspan><tspan font-size=\"0.7em\">%</tspan>\n    </text>\n    <text dy=\"1.4em\" class=\"ldg-btn\">\n      <tspan data-action=\"dup\">+ </tspan><tspan data-action=\"del\"> &times;</tspan>\n    </text>\n  </g>\n  <g class=\"ldg-colors\"></g>\n</svg>";
     },
     buildDots: function(toggled){
       var cs, i$, i, to$, color, colorAlt, ref$, g, c1, c2;
