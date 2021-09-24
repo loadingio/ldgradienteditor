@@ -1,0 +1,89 @@
+@font-face {
+  font-family: 'ldi';
+  font-weight: normal;
+  font-style: normal;
+  src: url("lib/ldui/fonts/ldi.ttf?x74ll4") format('truetype'), url("lib/ldui/fonts/ldi.woff?x74ll4") format('woff'), url("lib/ldui/fonts/ldi.svg?x74ll4#ldi") format('svg');
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: url("img/output.svg") center center fixed;
+  background: linear-gradient(45deg, #eafbfd, #fff) fixed;
+  color: #444;
+}
+#container {
+  text-align: center;
+  margin: 40px auto;
+  background: #fff;
+  max-width: 90%;
+  width: 1024px;
+  padding: 40px 20px;
+  border-radius: 10px;
+  box-shadow: 0 10px 15px rgba(0,64,128,0.1);
+}
+h1 {
+  font-family: 'Lobster', cursive;
+  font-size: 3em;
+  margin-bottom: -10px;
+}
+.title {
+  font-family: sans-serif;
+  text-align: center;
+}
+.title img {
+  margin-bottom: -30px;
+}
+.sorts {
+  text-align: center;
+}
+.sorts .sort {
+  cursor: pointer;
+  border-radius: 3px;
+  overflow: hidden;
+  width: 60px;
+  height: 24px;
+  display: inline-block;
+  margin: 10px;
+}
+.sorts .sort:after,
+.sorts .sort:before {
+  display: inline-block;
+  content: " ";
+  height: 100%;
+  width: 50%;
+}
+.sorts .sort.h:before {
+  background: #faf;
+}
+.sorts .sort.h:after {
+  background: #aff;
+}
+.sorts .sort.c:before {
+  background: #f8f;
+}
+.sorts .sort.c:after {
+  background: #ede;
+}
+.sorts .sort.l:before {
+  background: #bbb;
+}
+.sorts .sort.l:after {
+  background: #eee;
+}
+.menu {
+  position: absolute;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+}
+.menu i {
+  display: inline-block;
+  padding: 5px;
+  cursor: pointer;
+}

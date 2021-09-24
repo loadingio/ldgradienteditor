@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
 
+rm -rf dist
 mkdir -p dist
-rm dist/*.js
-echo "Transpiling ldge.ls to ldge.js"
-lsc -cpb src/ldge.ls > dist/ldge.js
-echo "Uglify ldge.js...."
-uglifyjs dist/ldge.js > dist/ldge.min.js
-echo "Transpiling ldge.styl..."
-stylus -p src/ldge.styl > dist/ldge.css
-echo "Uglifying ldpp.css..."
-uglifycss dist/ldge.css > dist/ldge.min.css
+echo "Transpiling ldge.ls to index.js"
+./node_modules/.bin/lsc -cpb src/ldge.ls > dist/index.js
+echo "Uglify index.js...."
+./node_modules/.bin/uglifyjs dist/index.js > dist/index.min.js
+echo "Transpiling ldge.styl to index.css ..."
+./node_modules/.bin/stylus -p src/ldge.styl > dist/index.css
+echo "Uglifying index.css..."
+./node_modules/.bin/uglifycss dist/index.css > dist/index.min.css
 echo "Done."
+
+echo "copy dist to web ..."
+rm -rf "web/static/assets/lib/ldgradienteditor/dev/"
+mkdir -p "web/static/assets/lib/ldgradienteditor/dev/"
+cp -R dist/* "web/static/assets/lib/ldgradienteditor/dev/"

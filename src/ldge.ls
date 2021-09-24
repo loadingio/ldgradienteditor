@@ -15,6 +15,7 @@
     @root.classList.add \ldgradient
     @ <<< do
       opt: opt
+      name: opt.name or null
       id: opt.id or "ldg-#{Math.random!toString 36 .substring 2}" # used in linearGradient
       dir: opt.dir or 0 # gradient direction
       angle: {}         # angle information for user interaaction
@@ -35,6 +36,9 @@
       ret = if typeof(d) == \string => ldColor.hsl(d) else d
       if !(ret.offset?) => ret.offset = i / (opt.colors.length - 1)
       ret
+    @avg = do
+      l: @colors.map(-> ldColor.hcl(it).l).reduce(((a,b) -> a + b), 0) / @colors.length
+    if @avg.l > 80 => @root.classList.add \dark
 
     # Prepare DOM
     if !@opt.manual-dom => @build! # skeleton
@@ -83,9 +87,11 @@
           document.removeEventListener \mousemove, funcs.bar.move
           document.removeEventListener \mouseup, funcs.bar.cancel
 
-    @root.addEventListener \mouseover, ~>
+    @root.addEventListener \mouseover, (e) ~>
       @state.hover = true
       if !@state.active => @toggle true
+      if e.target.parentNode.parentNode == @el.colors =>
+        @set-idx +e.target.parentNode.getAttribute(\data-idx)
     @root.addEventListener \mouseout, ~>
       @state.hover = false
       if !@dot and !@locked => @debounce = setTimeout (~> @toggle false), 300
@@ -97,8 +103,6 @@
       else if e.target.parentNode.parentNode == @el.colors =>
         @dot = e.target.parentNode
         @set-idx +@dot.getAttribute(\data-idx)
-        @el.hex.textContent = ldColor.hex @colors[@idx]
-        @el.percent.textContent = Math.round(@colors[@idx].offset * 100)
         document.addEventListener \mousemove, funcs.bar.move
         document.addEventListener \mouseup, funcs.bar.cancel
     @root.addEventListener \mousemove, (e) ~>
@@ -134,13 +138,40 @@
 
   GradientEditor.prototype = Object.create(Object.prototype) <<< do
 
+    get-json: -> return @{dir, colors, id}
+    get-css: ->
+      stops = @colors
+        .map -> """#{ldColor.hex(it)} #{it.offset * 100}%"""
+        .join(',')
+      """
+        .gradient-#{@name or @id} {
+          background: linear-gradient(#{@dir}deg,#stops);
+        }
+      """
+    get-svg: ->
+      stops = @colors
+        .map -> """<stop stop-color="#{ldColor.hex(it)}" offset="#{it.offset}"/>"""
+        .join('')
+      x1 = 0.5 + 0.5 * Math.cos(@dir * Math.PI / 180)
+      y1 = 0.5 + 0.5 * Math.sin(@dir * Math.PI / 180)
+      x2 = 0.5 + 0.5 * Math.cos((@dir + 180) * Math.PI / 180)
+      y2 = 0.5 + 0.5 * Math.sin((@dir + 180) * Math.PI / 180)
+      """
+      <?xml version="1.0">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+      <linearGradient id="gradient-#{@name or @id}" x1="#x1" y1="#y1" x2="#x2" y2="#y2">#stops</linearGradient>
+      <rect x="0" y="0" width="100" height="100" fill="url(\#gradient-#{@name or @id})"/>
+      </svg> 
+      """
+
     build: ->
       @root.innerHTML = """
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 10 120 120" preserveAspectRatio="xMidYMid">
         <linearGradient id="#{@id}-gradient" x1="0" x2="1" y1="0" y2="0"></linearGradient>
         <path class="ldg-bar" d="M-1.962 80 A60 60 1 0 0 101.962 80" fill="none" stroke="\#eeeff1" stroke-width="1"/>
         <g class="ldg-board" transform="rotate(#{@dir} 50 50)">
-          <circle cx="50" cy="50" r="50" fill="url(\##{@id}-gradient)"/><use href="\#ldg-knob"/>
+          <circle cx="50" cy="50" r="50" fill="url(\##{@id}-gradient)"/>
+          <use href="\#ldg-knob-#{if @avg.l > 80 => \dark else \light}"/>
         </g>
         <g class="ldg-texts" transform="translate(50 50)">
           <text class="ldg-hex" dx="-0.2em" dy="-0.7em"></text>

@@ -1,0 +1,45 @@
+doctype html
+html
+  include @/@loadingio/bootstrap.ext/dist/index.pug
+  head
+    link(href="https://fonts.googleapis.com/css?family=Lobster",rel="stylesheet")
+    +css("assets/lib/bootstrap/main/css/bootstrap.min.css")
+    +css("assets/lib/@loadingio/bootstrap.ext/main/index.min.css")
+    +css("assets/lib/ldiconfont/main/ldif.min.css")
+    +css("assets/lib/ldgradienteditor/dev/index.min.css")
+    +css("css/index.css")
+    style(type="text/css"): :stylus
+      @font-face {
+        font-family: 'ldi';
+        font-weight: normal;
+        font-style: normal;
+        src: url('assets/lib/ldiconfont/main/ldif.ttf') format('truetype');
+      }
+
+
+  body
+    include module.pug
+    br
+    br
+    .title
+      //-h1 Gradient.js
+      img(src="assets/img/logo.svg",alt="Gradient.js")
+      p minimalist linear gradient editor 
+    br
+    #menu.menu
+      i.i-bars
+      i.i-clone
+      i.i-save
+      i.i-close
+    .sorts
+      .sort.h(data-action="sort.h")
+      .sort.c(data-action="sort.c")
+      .sort.l(data-action="sort.l")
+
+    #container
+      #add(style="width:118px;height:118px;border-radius:50%;border:1px dashed #ddd;display:inline-block;margin:15px;vertical-align:top;background:#fff;")
+    script(src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js")
+    +script("assets/lib/@loadingio/ldquery/main/ldq.min.js")
+    +script("assets/lib/ldcolor/main/ldcolor.min.js")
+    +script("assets/lib/ldgradienteditor/dev/index.min.js")
+    script: include:lsc index.ls
