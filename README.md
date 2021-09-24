@@ -1,5 +1,7 @@
 # ldGradientEditor
 
+![ldge snapshot](https://raw.githubusercontent.com/loadingio/ldgradienteditor/master/web/static/assets/img/snapshot.png)
+
 Minimalist Gradient Editor by loading.io. Features:
 
  * Lightweight
