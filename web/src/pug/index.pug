@@ -1,13 +1,17 @@
 doctype html
 html
-  include @/@loadingio/bootstrap.ext/dist/index.pug
+  include @/@loadingio/bootstrap.ext/index.pug
+  include @/ldview/index.pug
   head
-    link(href="https://fonts.googleapis.com/css?family=Lobster",rel="stylesheet")
-    +css("assets/lib/bootstrap/main/css/bootstrap.min.css")
-    +css("assets/lib/@loadingio/bootstrap.ext/main/index.min.css")
-    +css("assets/lib/ldiconfont/main/ldif.min.css")
-    +css("assets/lib/ldgradienteditor/dev/index.min.css")
-    +css("css/index.css")
+    +css([
+      {url: "https://fonts.googleapis.com/css?family=Lobster"},
+      {name: "bootstrap", path: "dist/css/bootstrap.min.css"},
+      {name: "@loadingio/bootstrap.ext"},
+      {name: "@loadingio/bootstrap.ext"},
+      {name: "ldiconfont", path: "ldif.min.css"},
+      {name: "ldgradienteditor", version: "dev"},
+      {url: "/css/index.css"}
+    ])
     style(type="text/css"): :stylus
       @font-face {
         font-family: 'ldi';
@@ -38,8 +42,10 @@ html
 
     #container
       #add(style="width:118px;height:118px;border-radius:50%;border:1px dashed #ddd;display:inline-block;margin:15px;vertical-align:top;background:#fff;")
-    script(src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js")
-    +script("assets/lib/@loadingio/ldquery/main/ldq.min.js")
-    +script("assets/lib/ldcolor/main/ldcolor.min.js")
-    +script("assets/lib/ldgradienteditor/dev/index.min.js")
-    script: include:lsc index.ls
+    +script([
+      {url: "https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"},
+      {name: "@loadingio/ldquery"},
+      {name: "ldcolor"},
+      {name: "ldgradienteditor", version: "dev"}
+    ])
+    script(type="module"): include:lsc index.ls
